@@ -1,0 +1,55 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/polymer-singleton-a.html">
+
+<dom-module id="polymer-consumer-a">
+  <template>
+    <style>
+       :host {
+        display: inline-block;
+      }
+
+      paper-card,
+      paper-button,
+      paper-input,
+      paper-checkbox {
+        margin: 20px;
+      }
+
+      paper-card {
+        display: block;
+      }
+
+      paper-button {
+        color: #FFFFFF;
+        background: #3F53B5;
+      }
+    </style>
+    <polymer-singleton-a id="dataSingleton" data="{{data}}"></polymer-singleton-a>
+    <paper-card>
+      <paper-checkbox checked="{{data.checked}}"></paper-checkbox>
+      <paper-input value="{{data.text}}"></paper-input>
+      <paper-button raised on-click="dontDoThis">Break it!</paper-button>
+    </paper-card>
+  </template>
+  <script>
+    class polymerConsumerA extends Polymer.Element {
+      static get is() {
+        return 'polymer-consumer-a';
+      }
+      dontDoThis() {
+        // Overwriting objects breaks the binding with other instances.
+        this.set('data', { checked: true, text: 'broken' });
+
+        // Only ever write leaf properties:
+        // this.set('data.checked', true)
+        // this.set('data.text', 'good')
+        // this.set('data.detail.number', 5)
+      }
+    }
+    customElements.define(polymerConsumerA.is, polymerConsumerA);
+  </script>
+</dom-module>

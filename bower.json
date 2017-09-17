@@ -1,0 +1,16 @@
+{
+  "name": "polymer-singleton",
+  "description": "Polymer singleton pattern",
+  "main": "index.html",
+  "authors": ["Goffert van Gool <ruphin@ruphin.net>"],
+  "license": "MIT",
+  "keywords": ["web-components"],
+  "ignore": ["**/.*", "node_modules", "bower_components"],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox",
+    "paper-input": "PolymerElements/paper-input",
+    "paper-button": "PolymerElements/paper-button",
+    "paper-card": "PolymerElements/paper-card"
+  }
+}

@@ -1,0 +1,64 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/polymer-singleton-b.html">
+
+<dom-module id="polymer-consumer-b">
+  <template>
+    <style>
+       :host {
+        display: inline-block;
+      }
+
+      paper-card,
+      paper-button,
+      paper-input,
+      paper-checkbox {
+        margin: 20px;
+      }
+
+      paper-card {
+        display: block;
+      }
+
+      paper-button {
+        color: #FFFFFF;
+        background: #3F53B5;
+      }
+    </style>
+    <polymer-singleton-b id="dataSingleton" data="{{data}}" text="{{text}}"></polymer-singleton-b>
+    <paper-card>
+      <paper-checkbox id="checkbox" checked="[[data.checked]]">[[data.label]]</paper-checkbox>
+      <paper-input id="textfield" value="[[text]]"></paper-input>
+      <paper-button raised on-click="update">Update</paper-button>
+    </paper-card>
+  </template>
+  <script>
+    class polymerConsumerB extends Polymer.Element {
+      static get is() {
+        return 'polymer-consumer-b';
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        // Use the API functions for the singleton to update values.
+        this.$.checkbox.addEventListener("checked-changed", () => {
+          this.$.dataSingleton.setChecked(this.$.checkbox.checked);
+        })
+
+        this.$.textfield.addEventListener("value-changed", () => {
+          this.$.dataSingleton.setText(this.$.textfield.value);
+        })
+        // The {{data}} and {{text}} bindings on our singleton are two-way, but you can only ever read from them.
+        // Never write or assign to these properties directly, that will not work.
+      }
+
+      update() {
+        this.$.dataSingleton.update({ label: this.$.textfield.value, text: "Done!", checked: true })
+      }
+    }
+    customElements.define(polymerConsumerB.is, polymerConsumerB);
+  </script>
+</dom-module>

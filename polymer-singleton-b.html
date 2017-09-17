@@ -1,0 +1,100 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<dom-module id="polymer-singleton-b">
+  <template>
+    <style>
+       :host {
+        display: none;
+      }
+    </style>
+  </template>
+  <script>
+    // We wrap the class definition in a private scope, where we define variables shared between instances of the class.
+    {
+      // Our data singleton. Define defaults here.
+      const polymerSingletonData = {
+        checked: true,
+        label: ""
+      };
+
+      // Singleton for another property
+      let polymerSingletonText = "Hello"
+
+      // This is a mechanism to make sure we do not update
+      const oldValues = {};
+
+      // This is a list of all instances of the `<user-data>` element
+      const elements = [];
+
+      class polymerSingletonB extends Polymer.Element {
+        static get is() {
+          return 'polymer-singleton-b';
+        }
+
+        static get properties() {
+          return {
+            data: {
+              type: Object,
+              notify: true,
+              readOnly: true,
+              value: polymerSingletonData
+            },
+            text: {
+              type: String,
+              notify: true,
+              readOnly: true,
+              value: polymerSingletonText
+            }
+          };
+        }
+
+        // Explicit setter functions to change the data
+        setChecked(value) {
+          polymerSingletonData.checked = value;
+          elements.forEach((e) => { e.__notifyData() });
+        }
+
+        setData(value) {
+          Object.assign(polymerSingletonData, value)
+          elements.forEach((e) => { e.__notifyData() });
+        }
+
+        setText(value) {
+          polymerSingletonText = value;
+          elements.forEach((e) => { e.__notifyText() });
+        }
+
+        // Alternatively create API endpoints that manipulate the data and trigger the relevant bindings
+        // You can do whatever you want as long as you notify the relevant bindings
+        update(values) {
+          this.setData({ checked: values.checked, label: values.label });
+          this.setText(values.text);
+        }
+
+        // These explicitly trigger the polymer data bindings
+        // To trigger data bindings on nested items like objects or arrays, you need to reset to an empty object or array before setting the data again.
+        // It looks weird, but it only triggers the data binding system once, so data is not actually propagated twice.
+        __notifyData() {
+          this._setData({});
+          this._setData(polymerSingletonData);
+        }
+
+        // Simple properties can just be set directly
+        __notifyText() {
+          this._setText(polymerSingletonText);
+        }
+
+        // These methods update the list of all `<polymer-singleton>` elements.
+        connectedCallback() {
+          super.connectedCallback();
+          elements.push(this);
+        }
+        disconnectedCallback() {
+          super.disconnectedCallback();
+          elements.splice(elements.indexOf(this), 1);
+        }
+      }
+      customElements.define(polymerSingletonB.is, polymerSingletonB);
+    }
+  </script>
+</dom-module>

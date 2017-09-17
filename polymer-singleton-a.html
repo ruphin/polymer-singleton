@@ -1,0 +1,84 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<dom-module id="polymer-singleton-a">
+  <template>
+    <style>
+       :host {
+        display: none;
+      }
+    </style>
+  </template>
+  <script>
+    // We wrap the class definition in a private scope, where we define variables shared between instances of the class.
+    {
+      // Our data singleton. Define defaults here.
+      const polymerSingletonData = {
+        checked: false,
+        text: "Hello"
+      };
+
+      // This is a mechanism to make sure we do not update
+      const oldValues = {};
+
+      // This is a list of all instances of the `<user-data>` element
+      const elements = [];
+
+      class polymerSingletonA extends Polymer.Element {
+        static get is() {
+          return 'polymer-singleton-a';
+        }
+
+        static get properties() {
+          return {
+            data: {
+              type: Object,
+              notify: true,
+              readOnly: true,
+              value: polymerSingletonData
+            }
+          };
+        }
+
+        static get observers() {
+          return ['dataChanged(data.*)'];
+        }
+
+        // This method observes any changes made to `data`
+        dataChanged(change) {
+          let path = change.path.split('.');
+          // if the changed value is a sub-property of `data`, e.g. `data.text`
+          if (path.length > 1) {
+            // Check the previous known value for this property in `oldValues`
+            let oldValue = path.reduce((base, prop) => {
+              return (base[prop] = base[prop] === undefined ? {} : base[prop]);
+            }, oldValues);
+            // If the new value is different
+            if (change.value !== oldValue) {
+              // Update `oldValues` with this new value
+              let lastProp = path.splice(-1, 1);
+              path.reduce((base, prop) => {
+                return (base[prop] = base[prop]);
+              }, oldValues)[lastProp] =
+                change.value;
+              // Notify all `<polymer-singleton>` elements that the value for this path has changed, triggering any bindings
+              elements.forEach(e => {
+                e.notifyPath(change.path);
+              });
+            }
+          }
+        }
+
+        // These methods update the list of all `<polymer-singleton>` elements.
+        connectedCallback() {
+          super.connectedCallback();
+          elements.push(this);
+        }
+        disconnectedCallback() {
+          super.disconnectedCallback();
+          elements.splice(elements.indexOf(this), 1);
+        }
+      }
+      customElements.define(polymerSingletonA.is, polymerSingletonA);
+    }
+  </script>
+</dom-module>
