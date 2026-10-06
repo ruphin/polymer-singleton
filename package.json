@@ -1,11 +1,14 @@
 {
   "private": true,
-  "devDependencies": {
-    "browser-sync": "^2.18.13",
-    "connect-history-api-fallback": "^1.3.0",
-    "gulp": "^3.9.1"
-  },
+  "type": "module",
   "scripts": {
-    "dev": "gulp serve"
+    "postinstall": "bower install",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "bower": "^1.8.14",
+    "vite": "^8.3.3"
   }
 }

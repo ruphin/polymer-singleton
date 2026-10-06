@@ -32,7 +32,10 @@ I personally prefer this method over the first. My data singletons tend to have 
 ### Run the examples
 
 ```bash
-npm install
-bower install
-npm run dev
+npm install     # also runs `bower install` to fetch the Polymer 2 elements
+npm run dev     # start the Vite dev server on http://localhost:5000
 ```
+
+`npm run build` writes a static copy of the demo to `dist/`, and `npm run preview` serves it.
+
+The demo uses Polymer 2 and HTML imports, which current browsers no longer support natively. To run it in a modern browser you need the HTML imports polyfill from `bower_components/webcomponentsjs`.
